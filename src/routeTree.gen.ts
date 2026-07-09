@@ -9,13 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as CustomizeRouteImport } from './routes/customize'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrderIdRouteImport } from './routes/order.$id'
+import { Route as CustomizeKindRouteImport } from './routes/customize.$kind'
 import { Route as ShopCategorySubcategoryRouteImport } from './routes/shop.$category.$subcategory'
 import { Route as ShopCategorySubcategorySlugRouteImport } from './routes/shop.$category.$subcategory.$slug'
 
+const CustomizeRoute = CustomizeRouteImport.update({
+  id: '/customize',
+  path: '/customize',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -24,6 +32,11 @@ const CheckoutRoute = CheckoutRouteImport.update({
 const CartRoute = CartRouteImport.update({
   id: '/cart',
   path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +48,11 @@ const OrderIdRoute = OrderIdRouteImport.update({
   id: '/order/$id',
   path: '/order/$id',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CustomizeKindRoute = CustomizeKindRouteImport.update({
+  id: '/$kind',
+  path: '/$kind',
+  getParentRoute: () => CustomizeRoute,
 } as any)
 const ShopCategorySubcategoryRoute = ShopCategorySubcategoryRouteImport.update({
   id: '/shop/$category/$subcategory',
@@ -50,16 +68,22 @@ const ShopCategorySubcategorySlugRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/customize': typeof CustomizeRouteWithChildren
+  '/customize/$kind': typeof CustomizeKindRoute
   '/order/$id': typeof OrderIdRoute
   '/shop/$category/$subcategory': typeof ShopCategorySubcategoryRouteWithChildren
   '/shop/$category/$subcategory/$slug': typeof ShopCategorySubcategorySlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/customize': typeof CustomizeRouteWithChildren
+  '/customize/$kind': typeof CustomizeKindRoute
   '/order/$id': typeof OrderIdRoute
   '/shop/$category/$subcategory': typeof ShopCategorySubcategoryRouteWithChildren
   '/shop/$category/$subcategory/$slug': typeof ShopCategorySubcategorySlugRoute
@@ -67,8 +91,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/customize': typeof CustomizeRouteWithChildren
+  '/customize/$kind': typeof CustomizeKindRoute
   '/order/$id': typeof OrderIdRoute
   '/shop/$category/$subcategory': typeof ShopCategorySubcategoryRouteWithChildren
   '/shop/$category/$subcategory/$slug': typeof ShopCategorySubcategorySlugRoute
@@ -77,24 +104,33 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/cart'
     | '/checkout'
+    | '/customize'
+    | '/customize/$kind'
     | '/order/$id'
     | '/shop/$category/$subcategory'
     | '/shop/$category/$subcategory/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/cart'
     | '/checkout'
+    | '/customize'
+    | '/customize/$kind'
     | '/order/$id'
     | '/shop/$category/$subcategory'
     | '/shop/$category/$subcategory/$slug'
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/cart'
     | '/checkout'
+    | '/customize'
+    | '/customize/$kind'
     | '/order/$id'
     | '/shop/$category/$subcategory'
     | '/shop/$category/$subcategory/$slug'
@@ -102,14 +138,23 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
+  CustomizeRoute: typeof CustomizeRouteWithChildren
   OrderIdRoute: typeof OrderIdRoute
   ShopCategorySubcategoryRoute: typeof ShopCategorySubcategoryRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/customize': {
+      id: '/customize'
+      path: '/customize'
+      fullPath: '/customize'
+      preLoaderRoute: typeof CustomizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
@@ -122,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/cart'
       fullPath: '/cart'
       preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -137,6 +189,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/order/$id'
       preLoaderRoute: typeof OrderIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/customize/$kind': {
+      id: '/customize/$kind'
+      path: '/$kind'
+      fullPath: '/customize/$kind'
+      preLoaderRoute: typeof CustomizeKindRouteImport
+      parentRoute: typeof CustomizeRoute
     }
     '/shop/$category/$subcategory': {
       id: '/shop/$category/$subcategory'
@@ -155,6 +214,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface CustomizeRouteChildren {
+  CustomizeKindRoute: typeof CustomizeKindRoute
+}
+
+const CustomizeRouteChildren: CustomizeRouteChildren = {
+  CustomizeKindRoute: CustomizeKindRoute,
+}
+
+const CustomizeRouteWithChildren = CustomizeRoute._addFileChildren(
+  CustomizeRouteChildren,
+)
+
 interface ShopCategorySubcategoryRouteChildren {
   ShopCategorySubcategorySlugRoute: typeof ShopCategorySubcategorySlugRoute
 }
@@ -171,8 +242,10 @@ const ShopCategorySubcategoryRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
+  CustomizeRoute: CustomizeRouteWithChildren,
   OrderIdRoute: OrderIdRoute,
   ShopCategorySubcategoryRoute: ShopCategorySubcategoryRouteWithChildren,
 }
