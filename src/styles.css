@@ -179,7 +179,7 @@
   position: relative;
   display: inline-block;
 }
-@utility link-underline::after {
+.link-underline::after {
   content: "";
   position: absolute;
   left: 0;

@@ -2,10 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { NAV } from "@/lib/navigation";
+import { useCart } from "@/lib/cart";
 
 export function SiteHeader() {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { count } = useCart();
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
@@ -44,19 +46,19 @@ export function SiteHeader() {
           {/* Right: account + cart */}
           <div className="flex items-center gap-5 justify-end">
             <Link
-              to="/"
+              to="/auth"
               className="hidden md:inline-flex text-foreground/70 hover:text-foreground transition-colors"
               aria-label="Account"
             >
               <User className="h-[18px] w-[18px]" />
             </Link>
             <Link
-              to="/"
+              to="/cart"
               className="inline-flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors"
               aria-label="Cart"
             >
               <ShoppingBag className="h-[18px] w-[18px]" />
-              <span className="text-[11px] tracking-[0.2em] uppercase hidden md:inline">Bag (0)</span>
+              <span className="text-[11px] tracking-[0.2em] uppercase hidden md:inline">Bag ({count})</span>
             </Link>
           </div>
         </div>
@@ -73,12 +75,15 @@ export function SiteHeader() {
                 onMouseEnter={() => setOpenIdx(i)}
                 className="relative"
               >
-                <Link
-                  to="/"
-                  className="text-[11px] tracking-[0.28em] uppercase text-foreground/80 hover:text-[color:var(--brand-cognac)] transition-colors"
-                >
-                  {sec.title}
-                </Link>
+                {sec.title === "Customize" ? (
+                  <Link to="/customize" className="text-[11px] tracking-[0.28em] uppercase text-foreground/80 hover:text-[color:var(--brand-cognac)] transition-colors">
+                    {sec.title}
+                  </Link>
+                ) : (
+                  <button className="text-[11px] tracking-[0.28em] uppercase text-foreground/80 hover:text-[color:var(--brand-cognac)] transition-colors bg-transparent cursor-default">
+                    {sec.title}
+                  </button>
+                )}
               </li>
             ))}
           </ul>
@@ -92,24 +97,45 @@ export function SiteHeader() {
                   <h3 className="mt-3 text-3xl font-display text-foreground leading-tight">
                     Shop the<br />collection
                   </h3>
-                  <Link
-                    to="/"
-                    className="mt-6 inline-block text-[11px] tracking-[0.28em] uppercase text-[color:var(--brand-cognac)] link-underline"
-                    onClick={() => setOpenIdx(null)}
-                  >
-                    View all →
-                  </Link>
+                  {NAV[openIdx].children[0] && (
+                    <Link
+                      to="/shop/$category/$subcategory"
+                      params={{
+                        category: NAV[openIdx].href.replace("/shop/", ""),
+                        subcategory: NAV[openIdx].children[0].href.split("/").pop()!,
+                      }}
+                      className="mt-6 inline-block text-[11px] tracking-[0.28em] uppercase text-[color:var(--brand-cognac)] link-underline"
+                      onClick={() => setOpenIdx(null)}
+                    >
+                      View collection →
+                    </Link>
+                  )}
                 </div>
                 <ul className="col-span-3 grid grid-cols-3 gap-x-8 gap-y-3">
                   {NAV[openIdx].children.map((c) => (
                     <li key={c.href}>
-                      <Link
-                        to="/"
-                        onClick={() => setOpenIdx(null)}
-                        className="text-sm text-foreground/85 hover:text-[color:var(--brand-cognac)] transition-colors"
-                      >
-                        {c.title}
-                      </Link>
+                      {NAV[openIdx].title === "Customize" ? (
+                        <Link
+                          to="/customize/$kind"
+                          params={{ kind: c.href.split("/").pop()! }}
+                          onClick={() => setOpenIdx(null)}
+                          className="text-sm text-foreground/85 hover:text-[color:var(--brand-cognac)] transition-colors"
+                        >
+                          {c.title}
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/shop/$category/$subcategory"
+                          params={{
+                            category: NAV[openIdx].href.replace("/shop/", ""),
+                            subcategory: c.href.split("/").pop()!,
+                          }}
+                          onClick={() => setOpenIdx(null)}
+                          className="text-sm text-foreground/85 hover:text-[color:var(--brand-cognac)] transition-colors"
+                        >
+                          {c.title}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -137,13 +163,28 @@ export function SiteHeader() {
                 <ul className="space-y-3">
                   {sec.children.map((c) => (
                     <li key={c.href}>
-                      <Link
-                        to="/"
-                        onClick={() => setMobileOpen(false)}
-                        className="font-display text-xl text-foreground"
-                      >
-                        {c.title}
-                      </Link>
+                      {sec.title === "Customize" ? (
+                        <Link
+                          to="/customize/$kind"
+                          params={{ kind: c.href.split("/").pop()! }}
+                          onClick={() => setMobileOpen(false)}
+                          className="font-display text-xl text-foreground"
+                        >
+                          {c.title}
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/shop/$category/$subcategory"
+                          params={{
+                            category: sec.href.replace("/shop/", ""),
+                            subcategory: c.href.split("/").pop()!,
+                          }}
+                          onClick={() => setMobileOpen(false)}
+                          className="font-display text-xl text-foreground"
+                        >
+                          {c.title}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
