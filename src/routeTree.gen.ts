@@ -13,10 +13,16 @@ import { Route as CustomizeRouteImport } from './routes/customize'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrderIdRouteImport } from './routes/order.$id'
 import { Route as CustomizeKindRouteImport } from './routes/customize.$kind'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ShopCategorySubcategoryRouteImport } from './routes/shop.$category.$subcategory'
+import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
+import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
+import { Route as AuthenticatedAdminCustomRouteImport } from './routes/_authenticated/admin.custom'
 import { Route as ShopCategorySubcategorySlugRouteImport } from './routes/shop.$category.$subcategory.$slug'
 
 const CustomizeRoute = CustomizeRouteImport.update({
@@ -39,6 +45,10 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -54,11 +64,39 @@ const CustomizeKindRoute = CustomizeKindRouteImport.update({
   path: '/$kind',
   getParentRoute: () => CustomizeRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const ShopCategorySubcategoryRoute = ShopCategorySubcategoryRouteImport.update({
   id: '/shop/$category/$subcategory',
   path: '/shop/$category/$subcategory',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminProductsRoute =
+  AuthenticatedAdminProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminOrdersRoute =
+  AuthenticatedAdminOrdersRouteImport.update({
+    id: '/orders',
+    path: '/orders',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCustomRoute =
+  AuthenticatedAdminCustomRouteImport.update({
+    id: '/custom',
+    path: '/custom',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const ShopCategorySubcategorySlugRoute =
   ShopCategorySubcategorySlugRouteImport.update({
     id: '/$slug',
@@ -72,9 +110,14 @@ export interface FileRoutesByFullPath {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRouteWithChildren
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/customize/$kind': typeof CustomizeKindRoute
   '/order/$id': typeof OrderIdRoute
+  '/admin/custom': typeof AuthenticatedAdminCustomRoute
+  '/admin/orders': typeof AuthenticatedAdminOrdersRoute
+  '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/shop/$category/$subcategory': typeof ShopCategorySubcategoryRouteWithChildren
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/shop/$category/$subcategory/$slug': typeof ShopCategorySubcategorySlugRoute
 }
 export interface FileRoutesByTo {
@@ -85,19 +128,29 @@ export interface FileRoutesByTo {
   '/customize': typeof CustomizeRouteWithChildren
   '/customize/$kind': typeof CustomizeKindRoute
   '/order/$id': typeof OrderIdRoute
+  '/admin/custom': typeof AuthenticatedAdminCustomRoute
+  '/admin/orders': typeof AuthenticatedAdminOrdersRoute
+  '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/shop/$category/$subcategory': typeof ShopCategorySubcategoryRouteWithChildren
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/shop/$category/$subcategory/$slug': typeof ShopCategorySubcategorySlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRouteWithChildren
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/customize/$kind': typeof CustomizeKindRoute
   '/order/$id': typeof OrderIdRoute
+  '/_authenticated/admin/custom': typeof AuthenticatedAdminCustomRoute
+  '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
+  '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRoute
   '/shop/$category/$subcategory': typeof ShopCategorySubcategoryRouteWithChildren
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/shop/$category/$subcategory/$slug': typeof ShopCategorySubcategorySlugRoute
 }
 export interface FileRouteTypes {
@@ -108,9 +161,14 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/customize'
+    | '/admin'
     | '/customize/$kind'
     | '/order/$id'
+    | '/admin/custom'
+    | '/admin/orders'
+    | '/admin/products'
     | '/shop/$category/$subcategory'
+    | '/admin/'
     | '/shop/$category/$subcategory/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,23 +179,34 @@ export interface FileRouteTypes {
     | '/customize'
     | '/customize/$kind'
     | '/order/$id'
+    | '/admin/custom'
+    | '/admin/orders'
+    | '/admin/products'
     | '/shop/$category/$subcategory'
+    | '/admin'
     | '/shop/$category/$subcategory/$slug'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/auth'
     | '/cart'
     | '/checkout'
     | '/customize'
+    | '/_authenticated/admin'
     | '/customize/$kind'
     | '/order/$id'
+    | '/_authenticated/admin/custom'
+    | '/_authenticated/admin/orders'
+    | '/_authenticated/admin/products'
     | '/shop/$category/$subcategory'
+    | '/_authenticated/admin/'
     | '/shop/$category/$subcategory/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
@@ -176,6 +245,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -197,12 +273,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomizeKindRouteImport
       parentRoute: typeof CustomizeRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/shop/$category/$subcategory': {
       id: '/shop/$category/$subcategory'
       path: '/shop/$category/$subcategory'
       fullPath: '/shop/$category/$subcategory'
       preLoaderRoute: typeof ShopCategorySubcategoryRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/products': {
+      id: '/_authenticated/admin/products'
+      path: '/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AuthenticatedAdminProductsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/orders': {
+      id: '/_authenticated/admin/orders'
+      path: '/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AuthenticatedAdminOrdersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/custom': {
+      id: '/_authenticated/admin/custom'
+      path: '/custom'
+      fullPath: '/admin/custom'
+      preLoaderRoute: typeof AuthenticatedAdminCustomRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/shop/$category/$subcategory/$slug': {
       id: '/shop/$category/$subcategory/$slug'
@@ -213,6 +324,34 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminCustomRoute: typeof AuthenticatedAdminCustomRoute
+  AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
+  AuthenticatedAdminProductsRoute: typeof AuthenticatedAdminProductsRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminCustomRoute: AuthenticatedAdminCustomRoute,
+  AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
+  AuthenticatedAdminProductsRoute: AuthenticatedAdminProductsRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface CustomizeRouteChildren {
   CustomizeKindRoute: typeof CustomizeKindRoute
@@ -242,6 +381,7 @@ const ShopCategorySubcategoryRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
@@ -252,3 +392,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
