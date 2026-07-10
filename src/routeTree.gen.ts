@@ -15,15 +15,16 @@ import { Route as CartRouteImport } from './routes/cart'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShopCategoryRouteImport } from './routes/shop_.$category'
 import { Route as OrderIdRouteImport } from './routes/order.$id'
 import { Route as CustomizeKindRouteImport } from './routes/customize.$kind'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as ShopCategorySubcategoryRouteImport } from './routes/shop.$category.$subcategory'
+import { Route as ShopCategorySubcategoryRouteImport } from './routes/shop_.$category_.$subcategory'
 import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
 import { Route as AuthenticatedAdminCustomRouteImport } from './routes/_authenticated/admin.custom'
-import { Route as ShopCategorySubcategorySlugRouteImport } from './routes/shop.$category.$subcategory.$slug'
+import { Route as ShopCategorySubcategorySlugRouteImport } from './routes/shop_.$category_.$subcategory_.$slug'
 
 const CustomizeRoute = CustomizeRouteImport.update({
   id: '/customize',
@@ -54,6 +55,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShopCategoryRoute = ShopCategoryRouteImport.update({
+  id: '/shop_/$category',
+  path: '/shop/$category',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrderIdRoute = OrderIdRouteImport.update({
   id: '/order/$id',
   path: '/order/$id',
@@ -75,7 +81,7 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
 const ShopCategorySubcategoryRoute = ShopCategorySubcategoryRouteImport.update({
-  id: '/shop/$category/$subcategory',
+  id: '/shop_/$category_/$subcategory',
   path: '/shop/$category/$subcategory',
   getParentRoute: () => rootRouteImport,
 } as any)
@@ -99,9 +105,9 @@ const AuthenticatedAdminCustomRoute =
   } as any)
 const ShopCategorySubcategorySlugRoute =
   ShopCategorySubcategorySlugRouteImport.update({
-    id: '/$slug',
-    path: '/$slug',
-    getParentRoute: () => ShopCategorySubcategoryRoute,
+    id: '/shop_/$category_/$subcategory_/$slug',
+    path: '/shop/$category/$subcategory/$slug',
+    getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -113,10 +119,11 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/customize/$kind': typeof CustomizeKindRoute
   '/order/$id': typeof OrderIdRoute
+  '/shop/$category': typeof ShopCategoryRoute
   '/admin/custom': typeof AuthenticatedAdminCustomRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
-  '/shop/$category/$subcategory': typeof ShopCategorySubcategoryRouteWithChildren
+  '/shop/$category/$subcategory': typeof ShopCategorySubcategoryRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/shop/$category/$subcategory/$slug': typeof ShopCategorySubcategorySlugRoute
 }
@@ -128,10 +135,11 @@ export interface FileRoutesByTo {
   '/customize': typeof CustomizeRouteWithChildren
   '/customize/$kind': typeof CustomizeKindRoute
   '/order/$id': typeof OrderIdRoute
+  '/shop/$category': typeof ShopCategoryRoute
   '/admin/custom': typeof AuthenticatedAdminCustomRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
-  '/shop/$category/$subcategory': typeof ShopCategorySubcategoryRouteWithChildren
+  '/shop/$category/$subcategory': typeof ShopCategorySubcategoryRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/shop/$category/$subcategory/$slug': typeof ShopCategorySubcategorySlugRoute
 }
@@ -146,12 +154,13 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/customize/$kind': typeof CustomizeKindRoute
   '/order/$id': typeof OrderIdRoute
+  '/shop_/$category': typeof ShopCategoryRoute
   '/_authenticated/admin/custom': typeof AuthenticatedAdminCustomRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRoute
-  '/shop/$category/$subcategory': typeof ShopCategorySubcategoryRouteWithChildren
+  '/shop_/$category_/$subcategory': typeof ShopCategorySubcategoryRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
-  '/shop/$category/$subcategory/$slug': typeof ShopCategorySubcategorySlugRoute
+  '/shop_/$category_/$subcategory_/$slug': typeof ShopCategorySubcategorySlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -164,6 +173,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/customize/$kind'
     | '/order/$id'
+    | '/shop/$category'
     | '/admin/custom'
     | '/admin/orders'
     | '/admin/products'
@@ -179,6 +189,7 @@ export interface FileRouteTypes {
     | '/customize'
     | '/customize/$kind'
     | '/order/$id'
+    | '/shop/$category'
     | '/admin/custom'
     | '/admin/orders'
     | '/admin/products'
@@ -196,12 +207,13 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/customize/$kind'
     | '/order/$id'
+    | '/shop_/$category'
     | '/_authenticated/admin/custom'
     | '/_authenticated/admin/orders'
     | '/_authenticated/admin/products'
-    | '/shop/$category/$subcategory'
+    | '/shop_/$category_/$subcategory'
     | '/_authenticated/admin/'
-    | '/shop/$category/$subcategory/$slug'
+    | '/shop_/$category_/$subcategory_/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -212,7 +224,9 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   CustomizeRoute: typeof CustomizeRouteWithChildren
   OrderIdRoute: typeof OrderIdRoute
-  ShopCategorySubcategoryRoute: typeof ShopCategorySubcategoryRouteWithChildren
+  ShopCategoryRoute: typeof ShopCategoryRoute
+  ShopCategorySubcategoryRoute: typeof ShopCategorySubcategoryRoute
+  ShopCategorySubcategorySlugRoute: typeof ShopCategorySubcategorySlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -259,6 +273,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shop_/$category': {
+      id: '/shop_/$category'
+      path: '/shop/$category'
+      fullPath: '/shop/$category'
+      preLoaderRoute: typeof ShopCategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/order/$id': {
       id: '/order/$id'
       path: '/order/$id'
@@ -287,8 +308,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/shop/$category/$subcategory': {
-      id: '/shop/$category/$subcategory'
+    '/shop_/$category_/$subcategory': {
+      id: '/shop_/$category_/$subcategory'
       path: '/shop/$category/$subcategory'
       fullPath: '/shop/$category/$subcategory'
       preLoaderRoute: typeof ShopCategorySubcategoryRouteImport
@@ -315,12 +336,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCustomRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/shop/$category/$subcategory/$slug': {
-      id: '/shop/$category/$subcategory/$slug'
-      path: '/$slug'
+    '/shop_/$category_/$subcategory_/$slug': {
+      id: '/shop_/$category_/$subcategory_/$slug'
+      path: '/shop/$category/$subcategory/$slug'
       fullPath: '/shop/$category/$subcategory/$slug'
       preLoaderRoute: typeof ShopCategorySubcategorySlugRouteImport
-      parentRoute: typeof ShopCategorySubcategoryRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -365,20 +386,6 @@ const CustomizeRouteWithChildren = CustomizeRoute._addFileChildren(
   CustomizeRouteChildren,
 )
 
-interface ShopCategorySubcategoryRouteChildren {
-  ShopCategorySubcategorySlugRoute: typeof ShopCategorySubcategorySlugRoute
-}
-
-const ShopCategorySubcategoryRouteChildren: ShopCategorySubcategoryRouteChildren =
-  {
-    ShopCategorySubcategorySlugRoute: ShopCategorySubcategorySlugRoute,
-  }
-
-const ShopCategorySubcategoryRouteWithChildren =
-  ShopCategorySubcategoryRoute._addFileChildren(
-    ShopCategorySubcategoryRouteChildren,
-  )
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -387,8 +394,20 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   CustomizeRoute: CustomizeRouteWithChildren,
   OrderIdRoute: OrderIdRoute,
-  ShopCategorySubcategoryRoute: ShopCategorySubcategoryRouteWithChildren,
+  ShopCategoryRoute: ShopCategoryRoute,
+  ShopCategorySubcategoryRoute: ShopCategorySubcategoryRoute,
+  ShopCategorySubcategorySlugRoute: ShopCategorySubcategorySlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

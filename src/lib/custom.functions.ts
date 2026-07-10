@@ -19,7 +19,7 @@ const schema = z.object({
 });
 
 export const submitCustomRequest = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => schema.parse(d))
+  .validator((d: unknown) => schema.parse(d))
   .handler(async ({ data }) => {
     const sb = createClient<Database>(
       process.env.SUPABASE_URL!,
@@ -43,7 +43,7 @@ export const listCustomRequestsAdmin = createServerFn({ method: "GET" })
 
 export const updateCustomRequestStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string; status: string }) =>
+  .validator((d: { id: string; status: string }) =>
     z.object({ id: z.string().uuid(), status: z.enum(["new", "reviewing", "quoted", "in_production", "completed", "declined"]) }).parse(d),
   )
   .handler(async ({ data, context }) => {

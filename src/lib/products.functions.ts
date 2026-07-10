@@ -13,7 +13,7 @@ function publicClient() {
 }
 
 export const listProductsByCategory = createServerFn({ method: "GET" })
-  .inputValidator((d: { category: string; subcategory?: string | null }) =>
+  .validator((d: { category: string; subcategory?: string | null }) =>
     z.object({ category: z.string().min(1), subcategory: z.string().nullish() }).parse(d),
   )
   .handler(async ({ data }) => {
@@ -26,7 +26,7 @@ export const listProductsByCategory = createServerFn({ method: "GET" })
   });
 
 export const getProductBySlug = createServerFn({ method: "GET" })
-  .inputValidator((d: { slug: string }) => z.object({ slug: z.string().min(1) }).parse(d))
+  .validator((d: { slug: string }) => z.object({ slug: z.string().min(1) }).parse(d))
   .handler(async ({ data }) => {
     const sb = publicClient();
     const { data: product, error } = await sb.from("products").select("*").eq("slug", data.slug).eq("is_active", true).maybeSingle();
@@ -80,7 +80,7 @@ export const listAllProductsAdmin = createServerFn({ method: "GET" })
 
 export const upsertProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => productInputSchema.parse(d))
+  .validator((d: unknown) => productInputSchema.parse(d))
   .handler(async ({ data, context }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
     if (!isAdmin) throw new Error("Forbidden");
@@ -96,7 +96,7 @@ export const upsertProduct = createServerFn({ method: "POST" })
 
 export const deleteProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
     if (!isAdmin) throw new Error("Forbidden");

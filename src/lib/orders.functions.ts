@@ -29,7 +29,7 @@ const orderSchema = z.object({
 });
 
 export const createOrder = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => orderSchema.parse(d))
+  .validator((d: unknown) => orderSchema.parse(d))
   .handler(async ({ data }) => {
     const sb = createClient<Database>(
       process.env.SUPABASE_URL!,
@@ -69,7 +69,7 @@ export const createOrder = createServerFn({ method: "POST" })
   });
 
 export const getOrderById = createServerFn({ method: "GET" })
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     // Public confirmation lookup uses admin key to read (order id is a UUID and acts as unlisted).
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -92,7 +92,7 @@ export const listOrdersAdmin = createServerFn({ method: "GET" })
 
 export const updateOrderStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string; status: string }) =>
+  .validator((d: { id: string; status: string }) =>
     z.object({ id: z.string().uuid(), status: z.enum(["pending", "confirmed", "shipped", "delivered", "cancelled"]) }).parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -105,7 +105,7 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
 
 export const getOrderItemsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { orderId: string }) => z.object({ orderId: z.string().uuid() }).parse(d))
+  .validator((d: { orderId: string }) => z.object({ orderId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
     if (!isAdmin) throw new Error("Forbidden");

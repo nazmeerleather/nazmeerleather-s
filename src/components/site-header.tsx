@@ -1,198 +1,278 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
-import { NAV } from "@/lib/navigation";
+import { useState, useEffect } from "react";
+import { Menu, Search, ShoppingBag, User, X, ChevronLeft, MessageSquare, Phone, MessagesSquare } from "lucide-react";
+import { NAV, type NavSection } from "@/lib/navigation";
 import { useCart } from "@/lib/cart";
 
 export function SiteHeader() {
-  const [openIdx, setOpenIdx] = useState<number | null>(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<NavSection | null>(null);
   const { count } = useCart();
 
+  // Prevent scroll when drawers are open
+  useEffect(() => {
+    if (menuOpen || contactOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [menuOpen, contactOpen]);
+
+  const closeMenu = () => {
+    setMenuOpen(false);
+    setTimeout(() => setActiveCategory(null), 300); // Wait for transition
+  };
+
+  const closeContact = () => {
+    setContactOpen(false);
+  };
+
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
-      {/* Announcement bar */}
-      <div className="bg-[color:var(--brand-espresso-deep)] text-[color:var(--brand-bone)]/85 text-[11px] tracking-[0.25em] uppercase text-center py-2">
-        Complimentary worldwide shipping on orders over $500
-      </div>
+    <>
+      <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-border/40">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center h-[72px]">
+            {/* Left: Contact Us */}
+            <div className="flex items-center">
+              <button
+                onClick={() => setContactOpen(true)}
+                className="hidden md:inline-flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors text-sm font-medium tracking-wide"
+              >
+                <PlusIcon className="w-3 h-3" />
+                Contact Us
+              </button>
+            </div>
 
-      <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-20">
-          {/* Left: mobile toggle + search */}
-          <div className="flex items-center gap-4">
-            <button
-              aria-label="Open menu"
-              className="lg:hidden text-foreground"
-              onClick={() => setMobileOpen(true)}
-            >
-              <Menu className="h-5 w-5" />
-            </button>
-            <button
-              aria-label="Search"
-              className="hidden lg:inline-flex text-foreground/70 hover:text-foreground transition-colors"
-            >
-              <Search className="h-[18px] w-[18px]" />
-            </button>
-          </div>
-
-          {/* Wordmark */}
-          <Link
-            to="/"
-            className="font-display text-center tracking-[0.32em] text-[15px] md:text-[17px] text-foreground select-none"
-          >
-            CHIRAGH<span className="mx-2 text-[color:var(--brand-cognac)]">·</span>LEATHER CO.
-          </Link>
-
-          {/* Right: account + cart */}
-          <div className="flex items-center gap-5 justify-end">
+            {/* Center: Logo */}
             <Link
-              to="/auth"
-              className="hidden md:inline-flex text-foreground/70 hover:text-foreground transition-colors"
-              aria-label="Account"
+              to="/"
+              className="font-display text-center tracking-[0.32em] text-[18px] md:text-[22px] text-foreground select-none"
             >
-              <User className="h-[18px] w-[18px]" />
+              CHIRAGH
             </Link>
-            <Link
-              to="/cart"
-              className="inline-flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors"
-              aria-label="Cart"
-            >
-              <ShoppingBag className="h-[18px] w-[18px]" />
-              <span className="text-[11px] tracking-[0.2em] uppercase hidden md:inline">Bag ({count})</span>
-            </Link>
+
+            {/* Right: Utilities */}
+            <div className="flex items-center gap-5 justify-end">
+              <Link
+                to="/cart"
+                className="inline-flex items-center text-foreground/80 hover:text-foreground transition-colors"
+                aria-label="Cart"
+              >
+                <ShoppingBag className="h-5 w-5 stroke-[1.5]" />
+                {count > 0 && (
+                  <span className="ml-1.5 text-xs font-medium tabular-nums">{count}</span>
+                )}
+              </Link>
+              <Link
+                to="/auth"
+                className="hidden md:inline-flex text-foreground/80 hover:text-foreground transition-colors"
+                aria-label="Account"
+              >
+                <User className="h-5 w-5 stroke-[1.5]" />
+              </Link>
+              <button
+                aria-label="Search"
+                className="hidden md:inline-flex text-foreground/80 hover:text-foreground transition-colors"
+              >
+                <Search className="h-5 w-5 stroke-[1.5]" />
+              </button>
+              <button
+                onClick={() => setMenuOpen(true)}
+                className="inline-flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors text-sm font-medium tracking-wide uppercase"
+              >
+                <Menu className="h-5 w-5 stroke-[1.5]" />
+                <span className="hidden md:inline-block">Menu</span>
+              </button>
+            </div>
           </div>
         </div>
+      </header>
 
-        {/* Desktop nav */}
-        <nav
-          className="hidden lg:block border-t border-border/50"
-          onMouseLeave={() => setOpenIdx(null)}
-        >
-          <ul className="flex items-center justify-center gap-10 h-12">
-            {NAV.map((sec, i) => (
-              <li
-                key={sec.title}
-                onMouseEnter={() => setOpenIdx(i)}
-                className="relative"
-              >
-                {sec.title === "Customize" ? (
-                  <Link to="/customize" className="text-[11px] tracking-[0.28em] uppercase text-foreground/80 hover:text-[color:var(--brand-cognac)] transition-colors">
-                    {sec.title}
-                  </Link>
-                ) : (
-                  <button className="text-[11px] tracking-[0.28em] uppercase text-foreground/80 hover:text-[color:var(--brand-cognac)] transition-colors bg-transparent cursor-default">
-                    {sec.title}
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>
+      {/* Menu Drawer Overlay */}
+      <div
+        className={`fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
+          menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={closeMenu}
+      />
 
-          {/* Mega dropdown */}
-          {openIdx !== null && NAV[openIdx].children.length > 0 && (
-            <div className="absolute left-0 right-0 top-full bg-background border-t border-border shadow-[var(--shadow-soft)]">
-              <div className="mx-auto max-w-[1400px] px-10 py-10 grid grid-cols-4 gap-10">
-                <div>
-                  <div className="eyebrow">{NAV[openIdx].title}</div>
-                  <h3 className="mt-3 text-3xl font-display text-foreground leading-tight">
-                    Shop the<br />collection
-                  </h3>
-                  {NAV[openIdx].children[0] && (
-                    <Link
-                      to="/shop/$category/$subcategory"
-                      params={{
-                        category: NAV[openIdx].href.replace("/shop/", ""),
-                        subcategory: NAV[openIdx].children[0].href.split("/").pop()!,
-                      }}
-                      className="mt-6 inline-block text-[11px] tracking-[0.28em] uppercase text-[color:var(--brand-cognac)] link-underline"
-                      onClick={() => setOpenIdx(null)}
-                    >
-                      View collection →
-                    </Link>
-                  )}
-                </div>
-                <ul className="col-span-3 grid grid-cols-3 gap-x-8 gap-y-3">
-                  {NAV[openIdx].children.map((c) => (
-                    <li key={c.href}>
-                      {NAV[openIdx].title === "Customize" ? (
-                        <Link
-                          to="/customize/$kind"
-                          params={{ kind: c.href.split("/").pop()! }}
-                          onClick={() => setOpenIdx(null)}
-                          className="text-sm text-foreground/85 hover:text-[color:var(--brand-cognac)] transition-colors"
-                        >
-                          {c.title}
-                        </Link>
-                      ) : (
-                        <Link
-                          to="/shop/$category/$subcategory"
-                          params={{
-                            category: NAV[openIdx].href.replace("/shop/", ""),
-                            subcategory: c.href.split("/").pop()!,
-                          }}
-                          onClick={() => setOpenIdx(null)}
-                          className="text-sm text-foreground/85 hover:text-[color:var(--brand-cognac)] transition-colors"
-                        >
-                          {c.title}
-                        </Link>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
-        </nav>
-      </div>
-
-      {/* Mobile drawer */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 bg-background lg:hidden">
-          <div className="flex items-center justify-between h-20 px-6 border-b border-border">
-            <span className="font-display tracking-[0.28em] text-sm">CHIRAGH</span>
-            <button aria-label="Close menu" onClick={() => setMobileOpen(false)}>
+      {/* Menu Drawer */}
+      <div
+        className={`fixed inset-y-0 right-0 z-50 w-full max-w-[400px] bg-background shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          menuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="relative h-full flex flex-col overflow-hidden">
+          {/* Close Button */}
+          <div className="absolute top-6 right-6 z-10">
+            <button
+              onClick={closeMenu}
+              className="h-10 w-10 rounded-full bg-foreground flex items-center justify-center text-background hover:scale-105 transition-transform"
+            >
               <X className="h-5 w-5" />
             </button>
           </div>
-          <div className="px-6 py-8 overflow-y-auto max-h-[calc(100vh-5rem)]">
-            {NAV.map((sec) => (
-              <div key={sec.title} className="py-4 border-b border-border/60">
-                <div className="text-[11px] tracking-[0.28em] uppercase text-[color:var(--brand-cognac)] mb-3">
+
+          {/* Primary Menu View */}
+          <div
+            className={`absolute inset-0 pt-24 px-12 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              activeCategory ? "-translate-x-full" : "translate-x-0"
+            }`}
+          >
+            <nav className="flex flex-col gap-6 mt-8">
+              {NAV.map((sec) => (
+                <button
+                  key={sec.title}
+                  onClick={() => setActiveCategory(sec)}
+                  className="text-left font-display text-3xl tracking-wide text-foreground hover:text-[color:var(--brand-cognac)] transition-colors"
+                >
                   {sec.title}
-                </div>
-                <ul className="space-y-3">
-                  {sec.children.map((c) => (
-                    <li key={c.href}>
-                      {sec.title === "Customize" ? (
-                        <Link
-                          to="/customize/$kind"
-                          params={{ kind: c.href.split("/").pop()! }}
-                          onClick={() => setMobileOpen(false)}
-                          className="font-display text-xl text-foreground"
-                        >
-                          {c.title}
-                        </Link>
-                      ) : (
-                        <Link
-                          to="/shop/$category/$subcategory"
-                          params={{
-                            category: sec.href.replace("/shop/", ""),
-                            subcategory: c.href.split("/").pop()!,
-                          }}
-                          onClick={() => setMobileOpen(false)}
-                          className="font-display text-xl text-foreground"
-                        >
-                          {c.title}
-                        </Link>
-                      )}
-                    </li>
+                </button>
+              ))}
+            </nav>
+
+            <div className="mt-20 flex flex-col gap-5 text-sm tracking-wide">
+              <Link to="/" className="hover:underline underline-offset-4">Sign In</Link>
+              <Link to="/" className="hover:underline underline-offset-4">My Orders</Link>
+              <button onClick={() => { setContactOpen(true); setMenuOpen(false); }} className="text-left hover:underline underline-offset-4">Contact Us</button>
+              <a href="tel:+18774822430" className="hover:underline underline-offset-4">+1 8774822430</a>
+            </div>
+          </div>
+
+          {/* Secondary (Category) View */}
+          <div
+            className={`absolute inset-0 pt-24 px-12 bg-background transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-y-auto ${
+              activeCategory ? "translate-x-0" : "translate-x-full"
+            }`}
+          >
+            <button
+              onClick={() => setActiveCategory(null)}
+              className="flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-medium hover:text-[color:var(--brand-cognac)] transition-colors mb-12"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back
+            </button>
+
+            {activeCategory && (
+              <>
+                <h2 className="font-display text-4xl mb-10 text-foreground">
+                  {activeCategory.title}
+                </h2>
+                <nav className="flex flex-col gap-6">
+                  {activeCategory.children.map((child) => (
+                    <Link
+                      key={child.title}
+                      to={child.href as any}
+                      onClick={closeMenu}
+                      className="text-lg tracking-wide text-foreground hover:text-[color:var(--brand-cognac)] transition-colors"
+                    >
+                      {child.title}
+                    </Link>
                   ))}
-                </ul>
-              </div>
-            ))}
+                  <Link
+                    to={activeCategory.href as any}
+                    onClick={closeMenu}
+                    className="mt-6 text-lg tracking-wide text-[color:var(--brand-cognac)] hover:underline underline-offset-4"
+                  >
+                    View All {activeCategory.title}
+                  </Link>
+                </nav>
+              </>
+            )}
           </div>
         </div>
-      )}
-    </header>
+      </div>
+
+      {/* Contact Drawer Overlay */}
+      <div
+        className={`fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
+          contactOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={closeContact}
+      />
+
+      {/* Contact Drawer */}
+      <div
+        className={`fixed inset-y-0 right-0 z-50 w-full max-w-[440px] bg-background shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-y-auto ${
+          contactOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="relative pt-24 px-12 pb-20">
+          <div className="absolute top-6 right-6">
+            <button
+              onClick={closeContact}
+              className="h-10 w-10 rounded-full bg-foreground flex items-center justify-center text-background hover:scale-105 transition-transform"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <h2 className="font-display text-4xl mb-12 tracking-wide uppercase">
+            Contact Us
+          </h2>
+
+          <div className="space-y-12">
+            <div>
+              <h3 className="flex items-center gap-3 text-[11px] tracking-[0.2em] uppercase font-bold mb-3 border-b border-foreground inline-flex pb-1">
+                <MessageSquare className="h-4 w-4" /> Message Us
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Monday - Saturday from 10 AM to 8.30 PM (EST).<br />
+                Sunday from 11.30 AM to 8.30 PM (EST).
+              </p>
+            </div>
+
+            <div>
+              <h3 className="flex items-center gap-3 text-[11px] tracking-[0.2em] uppercase font-bold mb-3 border-b border-foreground inline-flex pb-1">
+                <Phone className="h-4 w-4" /> Call Us +1 (877) 482-2430
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Monday - Saturday from 10 AM to 8.30 PM (EST).<br />
+                Sunday from 11.30 AM to 8.30 PM (EST).
+              </p>
+            </div>
+
+            <div>
+              <h3 className="flex items-center gap-3 text-[11px] tracking-[0.2em] uppercase font-bold mb-3 border-b border-muted-foreground inline-flex pb-1 text-muted-foreground">
+                <div className="h-2 w-2 rounded-full bg-yellow-400" /> Live Chat
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Monday - Saturday from 10 AM to 8.30 PM (EST).<br />
+                Sunday from 11.30 AM to 8.30 PM (EST).
+              </p>
+            </div>
+
+            <div>
+              <h3 className="flex items-center gap-3 text-[11px] tracking-[0.2em] uppercase font-bold mb-3 border-b border-foreground inline-flex pb-1">
+                <MessagesSquare className="h-4 w-4" /> WhatsApp Us
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Monday - Saturday from 10 AM to 8.30 PM (EST).<br />
+                Sunday from 11.30 AM to 8.30 PM (EST).
+              </p>
+            </div>
+
+            <div className="pt-8">
+              <h4 className="text-lg font-medium mb-4">Do you need further assistance?</h4>
+              <button className="text-sm font-medium border-b border-foreground pb-1 hover:text-[color:var(--brand-cognac)] hover:border-[color:var(--brand-cognac)] transition-colors">
+                Get in Contact with Us
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function PlusIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M12 5v14M5 12h14" />
+    </svg>
   );
 }
