@@ -32,8 +32,8 @@ export const createOrder = createServerFn({ method: "POST" })
   .validator((d: unknown) => orderSchema.parse(d))
   .handler(async ({ data }) => {
     const sb = createClient<Database>(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_PUBLISHABLE_KEY!,
+      import.meta.env.VITE_SUPABASE_URL!,
+      import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY!,
       { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
     );
     const subtotal = data.items.reduce((s, i) => s + i.unit_price_cents * i.quantity, 0);

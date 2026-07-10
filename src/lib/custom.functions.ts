@@ -22,8 +22,8 @@ export const submitCustomRequest = createServerFn({ method: "POST" })
   .validator((d: unknown) => schema.parse(d))
   .handler(async ({ data }) => {
     const sb = createClient<Database>(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_PUBLISHABLE_KEY!,
+      import.meta.env.VITE_SUPABASE_URL!,
+      import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY!,
       { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
     );
     const { error } = await sb.from("custom_requests").insert(data);
