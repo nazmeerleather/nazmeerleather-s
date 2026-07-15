@@ -12,6 +12,20 @@ function publicClient() {
   );
 }
 
+export const listProducts = createServerFn({ method: "GET" })
+  .validator((d: { category?: string | null; subcategory?: string | null } = {}) =>
+    z.object({ category: z.string().nullish(), subcategory: z.string().nullish() }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const sb = publicClient();
+    let q = sb.from("products").select("*").eq("is_active", true);
+    if (data.category && data.category !== 'all') q = q.eq("category_slug", data.category);
+    if (data.subcategory && data.subcategory !== 'all') q = q.eq("subcategory_slug", data.subcategory);
+    const { data: rows, error } = await q.order("created_at", { ascending: false }).limit(20);
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
 export const listProductsByCategory = createServerFn({ method: "GET" })
   .validator((d: { category: string; subcategory?: string | null }) =>
     z.object({ category: z.string().min(1), subcategory: z.string().nullish() }).parse(d),
@@ -68,13 +82,21 @@ const productInputSchema = z.object({
 export const listAllProductsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+    const { data: isAdmin, error: rpcError } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
       _role: "admin",
     });
-    if (!isAdmin) throw new Error("Forbidden");
+    
+    if (rpcError) {
+      throw new Error(`RPC Error: ${rpcError.message} (${rpcError.code})`);
+    }
+    
+    if (!isAdmin) {
+      throw new Error(`Forbidden: User ${context.userId} is not admin. RPC returned: ${String(isAdmin)}`);
+    }
+    
     const { data, error } = await context.supabase.from("products").select("*").order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) throw new Error(`Products Error: ${error.message}`);
     return data ?? [];
   });
 

@@ -64,6 +64,13 @@ function ListingPage() {
         </div>
 
         <div className="mb-16 flex flex-wrap gap-4">
+          <Link
+            to="/shop/$category"
+            params={{ category }}
+            className="text-[10px] tracking-[0.25em] uppercase px-5 py-2.5 border border-border hover:border-foreground transition-colors"
+          >
+            View All
+          </Link>
           {section.children.map((c) => {
             const sub = c.href.split("/").pop()!;
             const active = sub === subcategory;

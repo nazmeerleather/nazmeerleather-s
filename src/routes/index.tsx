@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Plus, Minus, Star } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { listProducts } from "@/lib/products.functions";
 import heroJacket from "@/assets/hero-jacket.jpg";
 import heroBg from "@/assets/hero-bg.png";
 import catMen from "@/assets/category-men.jpg";
@@ -18,6 +20,30 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [openFaq, setOpenFaq] = useState<string | null>(null);
+  const [activeGender, setActiveGender] = useState<string>('men');
+  const [activeSubcategory, setActiveSubcategory] = useState<string>('all');
+  
+  const menSubcategories = [
+    { id: 'leather-jackets', label: 'Leather Jackets' },
+    { id: 'short-leather-wallets', label: 'Short Leather Wallets' },
+    { id: 'long-leather-wallets', label: 'Long Leather Wallets' },
+    { id: 'laptop-bags', label: 'Laptop Bags' },
+  ];
+  
+  const womenSubcategories = [
+    { id: 'leather-jackets', label: 'Leather Jackets' },
+    { id: 'leather-coats', label: 'Leather Coats' },
+    { id: 'tote-bags', label: 'Tote Bags' },
+    { id: 'cross-body-bags', label: 'Cross Body Bags' },
+    { id: 'shoulder-bags', label: 'Shoulder Bags' },
+  ];
+
+  const subcategoriesToShow = activeGender === 'men' ? menSubcategories : activeGender === 'women' ? womenSubcategories : [];
+
+  const { data: dbProducts = [], isLoading } = useQuery({
+    queryKey: ["products", "homepage", activeGender, activeSubcategory],
+    queryFn: () => listProducts({ data: { category: activeGender, subcategory: activeSubcategory } }),
+  });
 
   const faqs = [
     {
@@ -87,13 +113,110 @@ function Index() {
           </div>
         </section>
 
-        {/* CATEGORIES — Minimalist Luxury Grid */}
+        {/* PRODUCTS SHOWCASE - Based on User Sketch */}
         <section className="mx-auto max-w-[1600px] px-6 lg:px-10 py-32">
-          <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-            <CategoryCard src={catWomen} title="Women" category="women" className="aspect-[4/5] md:aspect-[3/4]" />
-            <CategoryCard src={catMen} title="Men" category="men" className="aspect-[4/5] md:aspect-[3/4]" />
-            <CategoryCard src={catGloves} title="Gloves" category="gloves" className="aspect-[4/5] md:aspect-[16/10]" />
-            <CategoryCard src={catBigPacks} title="Big Packs" category="big-packs" className="aspect-[4/5] md:aspect-[16/10]" />
+          {/* Main Categories (Men / Women) */}
+          <div className="flex justify-center gap-16 text-3xl md:text-4xl font-display mb-10">
+            <button 
+              onClick={() => { setActiveGender('men'); setActiveSubcategory('all'); }}
+              className={`transition-colors ${activeGender === 'men' ? 'text-foreground font-bold border-b-2 border-foreground pb-2' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Men
+            </button>
+            <button 
+              onClick={() => { setActiveGender('women'); setActiveSubcategory('all'); }}
+              className={`transition-colors ${activeGender === 'women' ? 'text-foreground font-bold border-b-2 border-foreground pb-2' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Women
+            </button>
+          </div>
+          
+          {/* Sub Categories */}
+          {subcategoriesToShow.length > 0 && (
+            <div className="flex flex-wrap justify-center gap-4 md:gap-8 text-xs uppercase tracking-[0.1em] md:tracking-[0.2em] mb-20 max-w-4xl mx-auto">
+              <button 
+                onClick={() => setActiveSubcategory('all')}
+                className={`transition-colors ${activeSubcategory === 'all' ? 'text-foreground font-bold border-b border-foreground pb-1' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                View All
+              </button>
+              {subcategoriesToShow.map(sub => (
+                <button 
+                  key={sub.id}
+                  onClick={() => setActiveSubcategory(activeSubcategory === sub.id ? 'all' : sub.id)}
+                  className={`transition-colors ${activeSubcategory === sub.id ? 'text-foreground font-bold border-b border-foreground pb-1' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  {sub.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Product Grid */}
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8 min-h-[500px]">
+            {isLoading ? (
+              <div className="col-span-1 md:col-span-3 flex items-center justify-center h-[500px] text-muted-foreground text-sm uppercase tracking-widest">
+                Loading...
+              </div>
+            ) : dbProducts.length > 0 ? (
+              dbProducts.map(item => (
+                <Link 
+                  key={item.id} 
+                  to="/shop/$category/$subcategory/$slug" 
+                  params={{ category: item.category_slug, subcategory: item.subcategory_slug, slug: item.slug }} 
+                  className="relative group overflow-hidden bg-muted cursor-pointer h-[500px] md:h-[65vh] block"
+                >
+                  <img src={item.images?.[0] || heroJacket} alt={item.name} className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1500ms] ease-out group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-500" />
+                  <div className="absolute bottom-10 left-10 right-10 flex flex-col justify-end h-full pointer-events-none">
+                    <h3 className="text-white text-3xl md:text-4xl font-display tracking-wide drop-shadow-md">
+                      {item.name}
+                    </h3>
+                    <span className="inline-flex items-center justify-center h-12 w-[180px] mt-6 border border-white/50 text-white text-[10px] tracking-[0.3em] uppercase backdrop-blur-sm opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 pointer-events-auto">
+                      Shop Item
+                    </span>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="col-span-1 md:col-span-3 flex items-center justify-center h-[500px] text-muted-foreground text-sm uppercase tracking-widest">
+                No items found for the selected categories.
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* VIDEOS SECTION */}
+        <section className="mx-auto max-w-[1600px] px-6 lg:px-10 pb-32">
+          <div className="text-center mb-16">
+            <h2 className="font-display text-3xl md:text-4xl text-[#1a1a1a]">Behind the Scenes</h2>
+            <p className="mt-4 text-sm text-muted-foreground uppercase tracking-[0.2em]">The Art of Craftsmanship</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8 min-h-[500px]">
+            {/* 3 Videos */}
+            {[
+              { id: 1, title: "Making of Leather Jacket", poster: heroJacket },
+              { id: 2, title: "Crafting the Wallets", poster: catMen },
+              { id: 3, title: "The Art of Gloves", poster: catGloves }
+            ].map((video) => (
+              <div key={video.id} className="relative group overflow-hidden bg-muted flex items-center justify-center h-[500px] md:h-[65vh] block">
+                <video 
+                  src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" 
+                  poster={video.poster}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1500ms] ease-out group-hover:scale-105"
+                  autoPlay 
+                  muted 
+                  loop 
+                  playsInline
+                />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500" />
+                <div className="absolute bottom-10 left-10 right-10 z-10 pointer-events-none">
+                  <h3 className="text-white text-2xl md:text-3xl font-display tracking-wide drop-shadow-md leading-tight">
+                    {video.title}
+                  </h3>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 

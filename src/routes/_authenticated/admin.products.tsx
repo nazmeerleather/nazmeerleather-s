@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { listAllProductsAdmin, upsertProduct, deleteProduct } from "@/lib/products.functions";
 import { NAV } from "@/lib/navigation";
 import { formatMoney } from "@/lib/format";
+import { PackagePlus, Edit2, Trash2, Search, X, ImageIcon, CheckCircle2, XCircle } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/products")({
   component: AdminProducts,
@@ -69,14 +70,18 @@ function AdminProducts() {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="font-display text-4xl">Products</h1>
+    <div className="animate-in fade-in duration-500">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+          <h1 className="font-display text-4xl">Catalog</h1>
+          <p className="mt-2 text-muted-foreground text-sm">Manage your product offerings, pricing, and visibility.</p>
+        </div>
         <button
           onClick={() => setEditing({ is_active: true, featured: false, sizes: [], images: [], price_cents: 0 })}
-          className="px-6 py-3 bg-[color:var(--brand-espresso)] text-[color:var(--brand-bone)] text-[11px] tracking-[0.28em] uppercase hover:bg-[color:var(--brand-cognac)]"
+          className="flex items-center gap-2 px-6 py-3 bg-[color:var(--brand-espresso)] text-[color:var(--brand-bone)] text-[10px] tracking-[0.2em] uppercase hover:bg-[color:var(--brand-cognac)] transition-colors"
         >
-          + New product
+          <PackagePlus className="h-4 w-4" />
+          New Product
         </button>
       </div>
 
@@ -96,22 +101,50 @@ function AdminProducts() {
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.id} className="border-t border-border">
-                  <td className="p-3">
-                    <div className="flex items-center gap-3">
-                      {r.images?.[0] && <img src={r.images[0]} alt="" className="w-10 h-12 object-cover bg-secondary" />}
+                <tr key={r.id} className="border-t border-border/50 hover:bg-muted/10 transition-colors">
+                  <td className="p-4">
+                    <div className="flex items-center gap-4">
+                      {r.images?.[0] ? (
+                        <img src={r.images[0]} alt="" className="w-12 h-14 object-cover border border-border" />
+                      ) : (
+                        <div className="w-12 h-14 bg-muted/30 border border-border flex items-center justify-center text-muted-foreground">
+                          <ImageIcon className="h-4 w-4" />
+                        </div>
+                      )}
                       <div>
-                        <div className="font-medium">{r.name}</div>
-                        <div className="text-xs text-muted-foreground">{r.slug}</div>
+                        <div className="font-medium text-foreground">{r.name}</div>
+                        <div className="text-[10px] text-muted-foreground mt-0.5 tracking-wider uppercase">{r.slug}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="p-3 text-muted-foreground">{r.category_slug} / {r.subcategory_slug}</td>
-                  <td className="p-3 text-right tabular-nums">{formatMoney(r.price_cents)}</td>
-                  <td className="p-3 text-center">{r.is_active ? "✓" : "—"}</td>
-                  <td className="p-3 text-right">
-                    <button onClick={() => setEditing(r)} className="text-xs tracking-[0.2em] uppercase hover:text-[color:var(--brand-cognac)] mr-3">Edit</button>
-                    <button onClick={() => onDelete(r.id)} className="text-xs tracking-[0.2em] uppercase text-destructive">Delete</button>
+                  <td className="p-4 text-muted-foreground">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground uppercase tracking-wider">
+                      {r.category_slug}
+                    </span>
+                    <span className="mx-2 text-border">/</span>
+                    <span className="text-xs">{r.subcategory_slug}</span>
+                  </td>
+                  <td className="p-4 text-right tabular-nums font-medium">{formatMoney(r.price_cents)}</td>
+                  <td className="p-4 text-center">
+                    {r.is_active ? (
+                      <span className="inline-flex items-center text-green-600 dark:text-green-400">
+                        <CheckCircle2 className="h-4 w-4" />
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center text-muted-foreground">
+                        <XCircle className="h-4 w-4" />
+                      </span>
+                    )}
+                  </td>
+                  <td className="p-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      <button onClick={() => setEditing(r)} className="p-2 border border-border text-muted-foreground hover:border-foreground hover:text-foreground transition-all">
+                        <Edit2 className="h-3.5 w-3.5" />
+                      </button>
+                      <button onClick={() => onDelete(r.id)} className="p-2 border border-border text-destructive hover:border-destructive hover:bg-destructive/10 transition-all">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -124,11 +157,13 @@ function AdminProducts() {
       )}
 
       {editing && (
-        <div className="fixed inset-0 z-50 bg-foreground/40 flex items-start justify-center overflow-y-auto p-6">
-          <div className="bg-background border border-border w-full max-w-2xl my-10">
-            <div className="p-6 border-b border-border flex justify-between">
-              <h2 className="font-display text-2xl">{editing.id ? "Edit product" : "New product"}</h2>
-              <button onClick={() => setEditing(null)} className="text-muted-foreground">Close</button>
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-start justify-center overflow-y-auto p-4 sm:p-6">
+          <div className="bg-background border border-border w-full max-w-3xl my-4 sm:my-10 shadow-2xl animate-in slide-in-from-bottom-4 duration-300">
+            <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
+              <h2 className="font-display text-2xl">{editing.id ? "Edit Product" : "New Product"}</h2>
+              <button onClick={() => setEditing(null)} className="text-muted-foreground hover:text-foreground transition-colors p-2">
+                <X className="h-5 w-5" />
+              </button>
             </div>
             <form onSubmit={save} className="p-6 space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
@@ -138,13 +173,32 @@ function AdminProducts() {
               <F label="Description" name="description" defaultValue={editing.description ?? ""} as="textarea" />
               <div className="grid md:grid-cols-3 gap-4">
                 <F label="Price (USD)" name="price" defaultValue={editing.price_cents ? String(editing.price_cents / 100) : ""} required />
-                <Select label="Category" name="category_slug" defaultValue={editing.category_slug ?? ""}>
+                <Select label="Category" name="category_slug" value={editing.category_slug ?? ""} onChange={(e) => setEditing({ ...editing, category_slug: e.target.value })}>
                   <option value="">Select…</option>
                   {NAV.filter((s) => s.title !== "Customize").map((s) => (
                     <option key={s.href} value={s.href.replace("/shop/", "")}>{s.title}</option>
                   ))}
                 </Select>
-                <F label="Subcategory slug" name="subcategory_slug" defaultValue={editing.subcategory_slug ?? ""} required />
+                {(() => {
+                  const selectedCategory = NAV.find((s) => s.href === `/shop/${editing.category_slug}`);
+                  const isMenOrWomen = editing.category_slug === 'men' || editing.category_slug === 'women';
+                  if (isMenOrWomen && selectedCategory) {
+                    return (
+                      <Select label="Subcategory" name="subcategory_slug" value={editing.subcategory_slug ?? ""} onChange={(e) => setEditing({ ...editing, subcategory_slug: e.target.value })}>
+                        <option value="">Select…</option>
+                        {selectedCategory.children.map((c) => {
+                          const sub = c.href.split("/").pop()!;
+                          return (
+                            <option key={sub} value={sub}>{c.title}</option>
+                          );
+                        })}
+                      </Select>
+                    );
+                  }
+                  return (
+                    <F label="Subcategory slug" name="subcategory_slug" value={editing.subcategory_slug ?? ""} onChange={(v) => setEditing({ ...editing, subcategory_slug: v })} required />
+                  );
+                })()}
               </div>
               <F label="Sizes (comma-separated, e.g. XS,S,M,L,XL,XXL)" name="sizes" defaultValue={(editing.sizes ?? []).join(",")} />
               <F label="Images (one URL per line, e.g. /products/foo.jpg)" name="images" defaultValue={(editing.images ?? []).join("\n")} as="textarea" />
@@ -164,25 +218,25 @@ function AdminProducts() {
   );
 }
 
-function F({ label, name, defaultValue, required, as, onChange }: { label: string; name: string; defaultValue?: string; required?: boolean; as?: "textarea"; onChange?: (v: string) => void }) {
+function F({ label, name, value, defaultValue, required, as, onChange }: { label: string; name: string; value?: string; defaultValue?: string; required?: boolean; as?: "textarea"; onChange?: (v: string) => void }) {
   const cls = "w-full border border-border px-3 py-2 text-sm bg-transparent focus:outline-none focus:border-foreground";
   return (
     <label className="block">
       <span className="block text-[11px] tracking-[0.2em] uppercase text-muted-foreground mb-1">{label}</span>
       {as === "textarea" ? (
-        <textarea name={name} rows={4} defaultValue={defaultValue} className={cls} onChange={(e) => onChange?.(e.target.value)} />
+        <textarea name={name} rows={4} value={value} defaultValue={defaultValue} className={cls} onChange={(e) => onChange?.(e.target.value)} />
       ) : (
-        <input name={name} defaultValue={defaultValue} required={required} className={cls} onChange={(e) => onChange?.(e.target.value)} />
+        <input name={name} value={value} defaultValue={defaultValue} required={required} className={cls} onChange={(e) => onChange?.(e.target.value)} />
       )}
     </label>
   );
 }
 
-function Select({ label, name, defaultValue, children }: { label: string; name: string; defaultValue?: string; children: React.ReactNode }) {
+function Select({ label, name, value, defaultValue, onChange, children }: { label: string; name: string; value?: string; defaultValue?: string; onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void; children: React.ReactNode }) {
   return (
     <label className="block">
       <span className="block text-[11px] tracking-[0.2em] uppercase text-muted-foreground mb-1">{label}</span>
-      <select name={name} defaultValue={defaultValue} className="w-full border border-border px-3 py-2 text-sm bg-background focus:outline-none focus:border-foreground">
+      <select name={name} value={value} defaultValue={defaultValue} onChange={onChange} className="w-full border border-border px-3 py-2 text-sm bg-background focus:outline-none focus:border-foreground">
         {children}
       </select>
     </label>

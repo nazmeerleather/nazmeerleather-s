@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -45,6 +45,7 @@ function CategoryPage() {
   const { data: products } = useSuspenseQuery(categoryProductsQuery(category));
   const section = NAV.find((s) => s.href === `/shop/${category}`);
   const title = section ? section.title : titleCase(category.replace("-", " "));
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -65,6 +66,13 @@ function CategoryPage() {
 
         {section && section.children && section.children.length > 0 && (
           <div className="mb-16 flex flex-wrap gap-4">
+            <Link
+              to="/shop/$category"
+              params={{ category }}
+              className="text-[10px] tracking-[0.25em] uppercase px-5 py-2.5 border transition-colors bg-foreground text-background border-foreground"
+            >
+              View All
+            </Link>
             {section.children.map((c) => {
               const sub = c.href.split("/").pop()!;
               return (

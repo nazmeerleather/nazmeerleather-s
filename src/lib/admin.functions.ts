@@ -20,3 +20,29 @@ export const claimFirstAdmin = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const getMyAdminStatus = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    // Try to read user_roles directly using user's token
+    const { data, error } = await context.supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "admin")
+      .maybeSingle();
+      
+    if (!error && data) {
+      return { isAdmin: true, userId: context.userId };
+    }
+    
+    // Fallback to has_role RPC just in case
+    const { data: rpcData, error: rpcError } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
+    
+    if (rpcError) {
+      console.error("Error fetching admin status:", rpcError);
+      return { isAdmin: false, userId: context.userId };
+    }
+    
+    return { isAdmin: !!rpcData, userId: context.userId };
+  });

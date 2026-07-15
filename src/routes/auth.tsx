@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Account — Chiragh Leather Co." }, { name: "robots", content: "noindex" }] }),
@@ -11,14 +12,13 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/" });
-    });
-  }, [navigate]);
+    if (!loading && user) navigate({ to: "/account" });
+  }, [loading, user, navigate]);
 
   async function handleGoogleLogin() {
     setBusy(true);

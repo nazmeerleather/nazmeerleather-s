@@ -19,6 +19,7 @@ import { Route as ShopCategoryRouteImport } from './routes/shop_.$category'
 import { Route as OrderIdRouteImport } from './routes/order.$id'
 import { Route as CustomizeKindRouteImport } from './routes/customize.$kind'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ShopCategorySubcategoryRouteImport } from './routes/shop_.$category_.$subcategory'
 import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
@@ -75,6 +76,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRouteWithChildren
+  '/account': typeof AuthenticatedAccountRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/customize/$kind': typeof CustomizeKindRoute
   '/order/$id': typeof OrderIdRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRouteWithChildren
+  '/account': typeof AuthenticatedAccountRoute
   '/customize/$kind': typeof CustomizeKindRoute
   '/order/$id': typeof OrderIdRoute
   '/shop/$category': typeof ShopCategoryRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRouteWithChildren
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/customize/$kind': typeof CustomizeKindRoute
   '/order/$id': typeof OrderIdRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/customize'
+    | '/account'
     | '/admin'
     | '/customize/$kind'
     | '/order/$id'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/customize'
+    | '/account'
     | '/customize/$kind'
     | '/order/$id'
     | '/shop/$category'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/customize'
+    | '/_authenticated/account'
     | '/_authenticated/admin'
     | '/customize/$kind'
     | '/order/$id'
@@ -301,6 +313,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -364,10 +383,12 @@ const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
 }
 
