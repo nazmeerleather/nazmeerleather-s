@@ -6,9 +6,9 @@ import craftImg from "@/assets/customize-craft.jpg";
 export const Route = createFileRoute("/customize")({
   head: () => ({
     meta: [
-      { title: "Made to Measure — Chiragh Leather Co." },
+      { title: "Made to Measure — Nazmeer Leather Co." },
       { name: "description", content: "Commission a made-to-measure leather jacket or coat, entirely to your specifications." },
-      { property: "og:title", content: "Made to Measure — Chiragh Leather Co." },
+      { property: "og:title", content: "Made to Measure — Nazmeer Leather Co." },
       { property: "og:description", content: "Commission a bespoke leather jacket or coat, entirely to your specifications." },
     ],
   }),

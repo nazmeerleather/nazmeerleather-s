@@ -54,7 +54,7 @@ function Index() {
     {
       id: "faq-2",
       question: "How do I care for my leather product?",
-      answer: "Chiragh products are crafted from carefully selected materials. Please handle with care for a longer product life. Protect from direct light, heat, and rain. Should it become wet, dry it immediately with a soft cloth. Store in the provided flannel bag or box."
+      answer: "Nazmeer products are crafted from carefully selected materials. Please handle with care for a longer product life. Protect from direct light, heat, and rain. Should it become wet, dry it immediately with a soft cloth. Store in the provided flannel bag or box."
     },
     {
       id: "faq-3",

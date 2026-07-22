@@ -76,20 +76,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Chiragh Leather Co. — Handcrafted Leather Goods" },
+      { title: "Nazmeer Leather Co. — Handcrafted Leather Goods" },
       {
         name: "description",
         content:
-          "Chiragh Leather Co. — premium handcrafted leather jackets, coats, wallets, bags and gloves for men and women. Made to be inherited.",
+          "Nazmeer Leather Co. — premium handcrafted leather jackets, coats, wallets, bags and gloves for men and women. Made to be inherited.",
       },
-      { name: "author", content: "Chiragh Leather Co." },
-      { property: "og:title", content: "Chiragh Leather Co. — Handcrafted Leather Goods" },
+      { name: "author", content: "Nazmeer Leather Co." },
+      { property: "og:title", content: "Nazmeer Leather Co. — Handcrafted Leather Goods" },
       {
         property: "og:description",
         content:
           "Premium handcrafted leather jackets, coats, wallets, bags and gloves. Made to be inherited.",
       },
-      { property: "og:site_name", content: "Chiragh Leather Co." },
+      { property: "og:site_name", content: "Nazmeer Leather Co." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

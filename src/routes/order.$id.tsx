@@ -10,7 +10,7 @@ const orderQuery = (id: string) =>
 
 export const Route = createFileRoute("/order/$id")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(orderQuery(params.id)),
-  head: () => ({ meta: [{ title: "Order confirmed — Chiragh Leather Co." }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Order confirmed — Nazmeer Leather Co." }, { name: "robots", content: "noindex" }] }),
   errorComponent: ({ reset }) => (
     <div className="p-20 text-center"><p>Unable to load order.</p><button onClick={reset} className="underline mt-4">Try again</button></div>
   ),

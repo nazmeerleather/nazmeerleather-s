@@ -26,7 +26,7 @@ export const Route = createFileRoute("/customize/$kind")({
     if (!KINDS[params.kind]) throw notFound();
   },
   head: ({ params }) => ({
-    meta: [{ title: `Commission a ${KINDS[params.kind]?.label ?? "Piece"} — Chiragh Leather Co.` }],
+    meta: [{ title: `Commission a ${KINDS[params.kind]?.label ?? "Piece"} — Nazmeer Leather Co.` }],
   }),
   errorComponent: ({ reset }) => <div className="p-20 text-center"><button onClick={reset} className="underline">Try again</button></div>,
   notFoundComponent: () => <div className="p-20 text-center">Not found</div>,

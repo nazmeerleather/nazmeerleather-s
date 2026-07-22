@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Account — Chiragh Leather Co." }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Account — Nazmeer Leather Co." }, { name: "robots", content: "noindex" }] }),
   component: AuthPage,
 });
 
@@ -43,7 +43,7 @@ function AuthPage() {
       <main className="mx-auto max-w-[440px] px-6 py-24">
         <div className="text-center">
           <div className="eyebrow">Account</div>
-          <h1 className="mt-4 font-display text-4xl">Welcome to Chiragh</h1>
+          <h1 className="mt-4 font-display text-4xl">Welcome to Nazmeer</h1>
           <p className="mt-4 text-sm text-muted-foreground">Sign in to manage your orders and custom requests.</p>
         </div>
         

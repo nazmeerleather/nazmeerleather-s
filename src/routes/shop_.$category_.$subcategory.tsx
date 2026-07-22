@@ -23,8 +23,8 @@ export const Route = createFileRoute("/shop_/$category_/$subcategory")({
   },
   head: ({ params }) => ({
     meta: [
-      { title: `${titleCase(params.subcategory.replace("-", " "))} — Chiragh Leather Co.` },
-      { name: "description", content: `Shop ${titleCase(params.subcategory.replace("-", " "))} at Chiragh Leather Co.` },
+      { title: `${titleCase(params.subcategory.replace("-", " "))} — Nazmeer Leather Co.` },
+      { name: "description", content: `Shop ${titleCase(params.subcategory.replace("-", " "))} at Nazmeer Leather Co.` },
     ],
   }),
   errorComponent: ({ reset }) => (

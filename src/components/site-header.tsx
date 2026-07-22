@@ -52,7 +52,7 @@ export function SiteHeader() {
               to="/"
               className="font-display text-center tracking-[0.32em] text-[18px] md:text-[22px] text-foreground select-none"
             >
-              CHIRAGH
+              NAZMEER
             </Link>
 
             {/* Right: Utilities */}

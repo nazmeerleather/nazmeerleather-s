@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { LayoutDashboard, Package, ShoppingBag, PenTool, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin — Chiragh Leather Co." }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Admin — Nazmeer Leather Co." }, { name: "robots", content: "noindex" }] }),
   component: AdminLayout,
 });
 
@@ -43,7 +43,7 @@ function AdminLayout() {
       <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link to="/" className="font-display tracking-[0.2em] text-sm hover:opacity-70 transition-opacity">CHIRAGH ATELIER</Link>
+            <Link to="/" className="font-display tracking-[0.2em] text-sm hover:opacity-70 transition-opacity">NAZMEER ATELIER</Link>
             <nav className="hidden md:flex gap-1">
               {tabs.map((t) => {
                 const active = pathname === t.to || (t.to !== "/admin" && pathname.startsWith(t.to));

@@ -9,7 +9,7 @@ import { formatMoney } from "@/lib/format";
 import { createOrder } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/checkout")({
-  head: () => ({ meta: [{ title: "Checkout — Chiragh Leather Co." }] }),
+  head: () => ({ meta: [{ title: "Checkout — Nazmeer Leather Co." }] }),
   component: Checkout,
 });
 

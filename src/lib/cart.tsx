@@ -21,7 +21,7 @@ type CartContextValue = {
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
-const KEY = "chiragh_cart_v1";
+const KEY = "nazmeer_cart_v1";
 
 function sameLine(a: CartItem, product_id: string, size: string | null) {
   return a.product_id === product_id && (a.size ?? null) === (size ?? null);

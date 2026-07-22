@@ -8,7 +8,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Package, User, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/account")({
-  head: () => ({ meta: [{ title: "Account — Chiragh Leather Co." }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Account — Nazmeer Leather Co." }, { name: "robots", content: "noindex" }] }),
   component: AccountPage,
 });
 

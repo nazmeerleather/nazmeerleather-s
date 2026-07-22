@@ -8,7 +8,7 @@ export function SiteFooter() {
         <div className="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <div className="font-display tracking-[0.32em] text-lg">
-              CHIRAGH<span className="mx-2 text-[color:var(--brand-cognac-soft)]">·</span>LEATHER CO.
+              NAZMEER<span className="mx-2 text-[color:var(--brand-cognac-soft)]">·</span>LEATHER CO.
             </div>
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-[color:var(--brand-bone)]/70 font-display italic text-lg">
               Handcrafted leather goods, made to be inherited.
@@ -53,7 +53,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-16 pt-8 border-t border-[color:var(--brand-bone)]/15 flex flex-col md:flex-row justify-between gap-4 text-[11px] tracking-[0.2em] uppercase text-[color:var(--brand-bone)]/50">
-          <span>© {new Date().getFullYear()} Chiragh Leather Co. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} Nazmeer Leather Co. All rights reserved.</span>
           <span>Crafted with care.</span>
         </div>
       </div>
